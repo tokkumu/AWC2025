@@ -1,0 +1,10 @@
+.separator {
+  width: 2px;
+  background-color: #ccc;
+  margin: 0 15px;
+}
+
+.container {
+  display: flex;
+  min-height: 70vh;
+}

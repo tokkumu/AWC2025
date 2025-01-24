@@ -1,0 +1,77 @@
+/* Container Styling */
+.config-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.config-header {
+  text-align: center;
+  font-size: 2em;
+}
+
+.config-field {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Styling for Input Groups */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 1.1em;
+}
+
+.input-group input,
+.input-group select {
+  padding: 8px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.input-group select {
+  min-width: 200px;
+}
+
+input[type='checkbox'] {
+  width: auto;
+  align-self: flex-start;
+}
+
+/* Mini-Game Section */
+.minigame-section {
+  margin-top: 20px;
+}
+
+/* Individual Minigame Box Styling */
+.minigame-box {
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  /* background-color: #f9f9f9; */
+}
+
+.minigame-box .input-group {
+  gap: 12px;
+}
+
+/* Dropdown and Multi-select */
+.options-dropdown select {
+  width: auto;
+  padding: 8px;
+  font-size: 1em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+}
+
+/* Enhancements */
+input[type='checkbox']:checked {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
