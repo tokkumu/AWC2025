@@ -114,7 +114,7 @@ export const CHALLENGE_LIST: ChallengeList = {
     description:
       '(2) Watch an anime from a <a href="https://myanimelist.net/forum/?topicid=1867298#msg68289129">Stack</a> provided by an active AWC Staff Member (MAL Staff are not AWC Staff)',
     addlInfo: [],
-    defaultExtraInfo: 'AWS Staff Stack Used: ',
+    defaultExtraInfo: 'AWC Staff Stack Used: ',
     minigames: ['Darts'],
     validators: [],
   },
