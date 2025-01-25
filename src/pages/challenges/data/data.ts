@@ -394,7 +394,7 @@ export const CHALLENGE_LIST: ChallengeList = {
       '(27) Watch an anime that started airing on a <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Monday.txt">Monday</a> or <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Tuesday.txt">Tuesday</a> (day must be listed on <a href="https://i.imgur.com/FchOYtT.png">MAL page</a>)',
     addlInfo: [],
     minigames: ['Whack-a-Mole D'],
-    validators: [validateBroadcastDate(['Monday', 'Tuesday'])],
+    validators: [validateBroadcastDate(['Mondays', 'Tuesdays'])],
   },
   '28': {
     bbCode:
@@ -403,7 +403,7 @@ export const CHALLENGE_LIST: ChallengeList = {
       '(28) Watch an anime that started airing on a <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Wednesday.txt">Wednesday</a> or <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Thursday.txt">Thursday</a> (day must be listed on <a href="https://i.imgur.com/Wi5bSB2.png">MAL page</a>)',
     addlInfo: [],
     minigames: ['Bingo 17A', 'Bingo 17B'],
-    validators: [validateBroadcastDate(['Wednesday', 'Thursday'])],
+    validators: [validateBroadcastDate(['Wednesdays', 'Thursdays'])],
   },
   '29': {
     bbCode:
@@ -412,7 +412,7 @@ export const CHALLENGE_LIST: ChallengeList = {
       '(29) Watch an anime that started airing on a <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Friday.txt">Friday</a> or <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Saturday.txt">Saturday</a> (day must be listed on <a href="https://i.imgur.com/x60U8GM.png">MAL page</a>)',
     addlInfo: [],
     minigames: ['Duck Pond'],
-    validators: [validateBroadcastDate(['Friday', 'Saturday'])],
+    validators: [validateBroadcastDate(['Fridays', 'Saturdays'])],
   },
   '30': {
     bbCode:
@@ -421,7 +421,7 @@ export const CHALLENGE_LIST: ChallengeList = {
       '(30) Watch an anime that started airing on a <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Sunday.txt">Sunday</a> or <a href="https://github.com/nyomdalee/awc-helper-txt/blob/master/Anime%20by%20Broadcast/Day%20of%20week/Unknown.txt">Unknown</a> day (day must be listed on <a href="https://i.imgur.com/qUSGGWN.png">MAL page</a>)',
     addlInfo: [],
     minigames: ['Bingo 21A', 'Bingo 21B'],
-    validators: [validateBroadcastDate(['Sunday', 'Unknown'])],
+    validators: [validateBroadcastDate(['Sundays', 'Unknown'])],
   },
   '31': {
     bbCode:
