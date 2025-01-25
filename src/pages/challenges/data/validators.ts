@@ -208,7 +208,7 @@ export function validateTags(requiredTags: string[], requiredCount: number) {
     const tags = [...genres, ...themes, ...demographics];
     const tagCount = tags.filter((g) => requiredTags.includes(g)).length;
     return {
-      criterion: `Anime must have ${requiredCount} of the following tags: ${arrayToList(themes)}`,
+      criterion: `Anime must have ${requiredCount} of the following tags: ${arrayToList(requiredTags)}`,
       valid: tagCount >= requiredCount,
     };
   };
