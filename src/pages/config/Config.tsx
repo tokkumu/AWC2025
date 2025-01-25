@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import './Config.css';
 
-const QUEST_RESTRICTIONS = [
+const TAG_BASED_RESTRICTIONS = [
   'Warrior',
   'Adventurer',
   'Jester',
@@ -20,12 +20,18 @@ const QUEST_RESTRICTIONS = [
   'Sorcerer',
   'Guardian',
   'Cleric',
-  'Watcher',
-  'Seeker',
-  'Finder',
-  'Neutral',
-  'Chaotic Evil',
 ];
+
+const TYPE_BASED_RESTRICTIONS = ['Watcher', 'Seeker', 'Finder'];
+
+const RATING_BASED_RESTRICTIONS = ['Neutral', 'Chaotic Evil'];
+
+const QUEST_RESTRICTIONS = [
+  ...TAG_BASED_RESTRICTIONS,
+  ...TYPE_BASED_RESTRICTIONS,
+  ...RATING_BASED_RESTRICTIONS,
+];
+
 const CHALLENGE_RESTRICTIONS = [
   'Exalted',
   'Indomitable',
@@ -338,6 +344,54 @@ const Config = ({
                     </MenuItem>
                   ))}
                 </Select>
+                {configData.minigames.whackamoleRestrictions.includes(
+                  'Exalted'
+                ) ? (
+                  <div>
+                    <Typography>Exalted Tag-Based Restriction</Typography>
+                    <TextField
+                      hiddenLabel
+                      select
+                      name="minigames.exaltedRestriction"
+                      value={configData.minigames.exaltedRestriction}
+                      onChange={(e) =>
+                        handleMinigameChange(e.target.name, e.target.value)
+                      }
+                      fullWidth
+                      sx={{ backgroundColor: 'white' }}
+                    >
+                      {TAG_BASED_RESTRICTIONS.map((restriction) => (
+                        <MenuItem key={restriction} value={restriction}>
+                          {restriction}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </div>
+                ) : null}
+                {configData.minigames.whackamoleRestrictions.includes(
+                  'Supreme'
+                ) ? (
+                  <div>
+                    <Typography>Supreme Rating-Based Restriction</Typography>
+                    <TextField
+                      hiddenLabel
+                      select
+                      name="minigames.supremeRestriction"
+                      value={configData.minigames.supremeRestriction}
+                      onChange={(e) =>
+                        handleMinigameChange(e.target.name, e.target.value)
+                      }
+                      fullWidth
+                      sx={{ backgroundColor: 'white' }}
+                    >
+                      {RATING_BASED_RESTRICTIONS.map((restriction) => (
+                        <MenuItem key={restriction} value={restriction}>
+                          {restriction}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </div>
+                ) : null}
                 <Typography>
                   Select Whack-A-Mole Quest #1 And Restrictions
                 </Typography>

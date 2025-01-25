@@ -14,7 +14,7 @@ export interface ChallengeEntry {
   startDate: string;
   endDate: string;
   extraInfo: string;
-  challenges: string[];
+  minigames: string[];
   validationStatus: ValidationStatus;
 }
 

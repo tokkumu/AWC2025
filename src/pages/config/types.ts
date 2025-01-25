@@ -17,6 +17,8 @@ export interface ConfigData {
     plinko: boolean;
     whackamole: boolean;
     whackamoleRestrictions: string[];
+    exaltedRestriction: string;
+    supremeRestriction: string;
     whackamole1: 'A' | 'B' | 'C' | 'D' | 'E';
     whackamole1Restrictions: string[];
     whackamole2: 'A' | 'B' | 'C' | 'D' | 'E';

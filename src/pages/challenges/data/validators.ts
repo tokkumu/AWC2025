@@ -8,10 +8,32 @@ import {
   ValidatorStatus,
 } from './types';
 
+const restrictionMap: Record<string, Validator> = {
+  Warrior: validateTags(['Action'], 1),
+  Adventurer: validateTags(['Adventure'], 1),
+  Jester: validateTags(['Comedy'], 1),
+  Thespian: validateTags(['Drama'], 1),
+  Minstrel: validateTags(['Fantasy'], 1),
+  Sorcerer: validateTags(['Romance'], 1),
+  Guardian: validateTags(['Shounen'], 1),
+  Cleric: validateTags(['Slice of Life'], 1),
+  Watcher: validateType(['TV']),
+  Seeker: validateType(['Movie']),
+  Finder: validateType(['OVA']),
+  Neutral: validateRating(['PG-13']),
+  'Chaotic Evil': validateRating([
+    'R - 17+ (violence & profanity)',
+    'R+ - Mild Nudity',
+  ]),
+  Indomitable: validateEpisodeDuration(20, 'gte'),
+  Almighty: validateType(['TV']),
+};
+
 export function validateAnime(
   animeDetails: AnimeDetails,
   config: ConfigData,
   challengeEntry: ChallengeEntry,
+  minigame: string,
   validators: Validator[]
 ): ValidationStatus {
   const params: ValidatorParams = {
@@ -20,7 +42,49 @@ export function validateAnime(
     entry: challengeEntry,
   };
 
-  return buildResponse(validators.map((validator) => validator(params)));
+  const allValidators = [...validators];
+
+  if (minigame.startsWith('Whack-a-Mole')) {
+    console.log(minigame);
+    console.log(config.minigames);
+    if (`Whack-a-Mole ${config.minigames.whackamole1}` === minigame) {
+      allValidators.push(
+        ...config.minigames.whackamole1Restrictions.map(
+          (r) => restrictionMap[r]
+        )
+      );
+    } else if (`Whack-a-Mole ${config.minigames.whackamole2}` === minigame) {
+      allValidators.push(
+        ...config.minigames.whackamole2Restrictions.map(
+          (r) => restrictionMap[r]
+        )
+      );
+    } else if (`Whack-a-Mole ${config.minigames.whackamole3}` === minigame) {
+      allValidators.push(
+        ...config.minigames.whackamole3Restrictions.map(
+          (r) => restrictionMap[r]
+        )
+      );
+    }
+
+    if (config.minigames.whackamoleRestrictions.includes('Exalted')) {
+      allValidators.push(restrictionMap[config.minigames.exaltedRestriction]);
+    }
+
+    if (config.minigames.whackamoleRestrictions.includes('Supreme')) {
+      allValidators.push(restrictionMap[config.minigames.supremeRestriction]);
+    }
+
+    if (config.minigames.whackamoleRestrictions.includes('Indomitable')) {
+      allValidators.push(restrictionMap['Indomitable']);
+    }
+
+    if (config.minigames.whackamoleRestrictions.includes('Almighty')) {
+      allValidators.push(restrictionMap['Almighty']);
+    }
+  }
+
+  return buildResponse(allValidators.map((validator) => validator(params)));
 }
 
 function buildResponse(criteria: ValidatorStatus[]): ValidationStatus {

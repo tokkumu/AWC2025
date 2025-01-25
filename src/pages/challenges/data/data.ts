@@ -1553,7 +1553,7 @@ export function generateChallengeData() {
       startDate: '',
       endDate: '',
       extraInfo: value.defaultExtraInfo ?? '',
-      challenges: value.minigames,
+      minigames: value.minigames,
       validationStatus: {
         valid: false,
         success: [],

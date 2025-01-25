@@ -112,7 +112,7 @@ function generateDarts(
   configData: ConfigData
 ) {
   const entries = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes('Darts')
+    entry.minigames.includes('Darts')
   );
 
   return replaceTemplates(dartsText, {
@@ -130,12 +130,12 @@ function generateBingo(
   configData: ConfigData
 ) {
   const entries = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(
+    entry.minigames.includes(
       configData.minigames.bingo17 === '17A' ? 'Bingo 17A' : 'Bingo 17B'
     )
   );
   const entries2 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(
+    entry.minigames.includes(
       configData.minigames.bingo21 === '21A' ? 'Bingo 21A' : 'Bingo 21B'
     )
   );
@@ -162,13 +162,13 @@ function generatePlinko(
   configData: ConfigData
 ) {
   const entries = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes('Plinko Tier 1')
+    entry.minigames.includes('Plinko Tier 1')
   );
   const entries2 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes('Plinko Tier 2')
+    entry.minigames.includes('Plinko Tier 2')
   );
   const entries3 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes('Plinko Tier 3')
+    entry.minigames.includes('Plinko Tier 3')
   );
 
   return replaceTemplates(plinkoText, {
@@ -204,19 +204,13 @@ function generateWhackamole(
   };
 
   const entries = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(
-      `Whack-a-Mole ${configData.minigames.whackamole1}`
-    )
+    entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole1}`)
   );
   const entries2 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(
-      `Whack-a-Mole ${configData.minigames.whackamole2}`
-    )
+    entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole2}`)
   );
   const entries3 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(
-      `Whack-a-Mole ${configData.minigames.whackamole3}`
-    )
+    entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole3}`)
   );
 
   return replaceTemplates(whackamoleText, {
@@ -264,13 +258,13 @@ function generateTarot(
   const [routeB] = configData.minigames.tarotEnding.split('.');
 
   const entries = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes('Tarot Route 1')
+    entry.minigames.includes('Tarot Route 1')
   );
   const entries2 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(`Tarot Route ${routeB}`)
+    entry.minigames.includes(`Tarot Route ${routeB}`)
   );
   const entries3 = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes(`Tarot Route ${configData.minigames.tarotEnding}`)
+    entry.minigames.includes(`Tarot Route ${configData.minigames.tarotEnding}`)
   );
 
   return replaceTemplates(tarotText, {
@@ -308,7 +302,7 @@ function generateDuckpond(
   configData: ConfigData
 ) {
   const entries = Object.values(challengeDetails).filter((entry) =>
-    entry.challenges.includes('Duck Pond')
+    entry.minigames.includes('Duck Pond')
   );
 
   return replaceTemplates(duckpondText, {

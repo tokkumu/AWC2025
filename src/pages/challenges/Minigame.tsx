@@ -54,6 +54,7 @@ const Minigame = (props: MinigameProps) => {
           props.animeData[animeId],
           props.config,
           newChallengeData,
+          props.currentMinigame,
           CHALLENGE_LIST[challengeId].validators ?? []
         )
       : { valid: false, success: [], error: ['Anime not found'] };
@@ -78,6 +79,7 @@ const Minigame = (props: MinigameProps) => {
       animeDetails,
       props.config,
       getChallenge(challengeId),
+      props.currentMinigame,
       CHALLENGE_LIST[challengeId].validators ?? []
     );
 
@@ -163,6 +165,7 @@ const Minigame = (props: MinigameProps) => {
       updatedEntry,
       props.config,
       getChallenge(challengeId),
+      props.currentMinigame,
       CHALLENGE_LIST[challengeId].validators ?? []
     );
     props.setChallengeData((challengeData) => ({
