@@ -183,11 +183,11 @@ export function validateEpisodeDuration(
 
 export function validateStartDate(date: string, exp: 'gte' | 'lte'): Validator {
   return (params: ValidatorParams) => {
-    const startDate = new Date(params.entry.startDate);
-    const targetDate = new Date(`${date}T00:00:00+00:00`);
+    const { year, month, day } = params.anime.aired.from;
+    const startDate = `${year}-${month}-${day}`;
     return {
       criterion: `Anime must ${exp === 'gte' ? 'start airing on or after' : 'start airing on or before'} ${date}`,
-      valid: exp === 'gte' ? startDate >= targetDate : startDate <= targetDate,
+      valid: exp === 'gte' ? startDate >= date : startDate <= date,
     };
   };
 }
