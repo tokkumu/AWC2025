@@ -1,6 +1,6 @@
-import { AnimeDetails } from '../../../types';
 import { ConfigData } from '../../config/types';
 import { ChallengeEntry } from '../types';
+import { CHALLENGE_LIST } from './data';
 import {
   ValidationStatus,
   Validator,
@@ -30,23 +30,23 @@ const restrictionMap: Record<string, Validator> = {
 };
 
 export function validateAnime(
-  animeDetails: AnimeDetails,
   config: ConfigData,
   challengeEntry: ChallengeEntry,
-  minigame: string,
-  validators: Validator[]
+  minigame: string
 ): ValidationStatus {
+  if (!challengeEntry.animeData) {
+    return { valid: false, success: [], error: ['Anime not found'] };
+  }
+
   const params: ValidatorParams = {
-    anime: animeDetails,
+    anime: challengeEntry.animeData,
     config,
     entry: challengeEntry,
   };
 
-  const allValidators = [...validators];
+  const allValidators = [...CHALLENGE_LIST[challengeEntry.id].validators];
 
   if (minigame.startsWith('Whack-a-Mole')) {
-    console.log(minigame);
-    console.log(config.minigames);
     if (`Whack-a-Mole ${config.minigames.whackamole1}` === minigame) {
       allValidators.push(
         ...config.minigames.whackamole1Restrictions.map(
@@ -266,9 +266,7 @@ export function validateGenreCount(count: number, exp: 'lte' | 'gte') {
 
 export function validateTags(requiredTags: string[], requiredCount: number) {
   return (params: ValidatorParams) => {
-    const {
-      anime: { genres, themes, demographics },
-    } = params;
+    const { genres, themes, demographics } = params.anime;
     const tags = [...genres, ...themes, ...demographics];
     const tagCount = tags.filter((g) => requiredTags.includes(g)).length;
     return {
@@ -293,9 +291,7 @@ export function validateSongCountEquals(
   requiredEndings: number
 ): Validator {
   return (params: ValidatorParams) => {
-    const {
-      anime: { openingCount, endingCount },
-    } = params;
+    const { openingCount, endingCount } = params.anime;
     return {
       criterion: `Anime must have ${requiredOpenings} openings and ${requiredEndings} endings`,
       valid:
@@ -309,9 +305,7 @@ export function validateSongCountAtLeast(
   requiredEndings: number
 ): Validator {
   return (params: ValidatorParams) => {
-    const {
-      anime: { openingCount, endingCount },
-    } = params;
+    const { openingCount, endingCount } = params.anime;
     return {
       criterion: `Anime must have at least ${requiredOpenings} openings or ${requiredEndings} endings`,
       valid: openingCount >= requiredOpenings || endingCount >= requiredEndings,

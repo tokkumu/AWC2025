@@ -9,12 +9,12 @@ import {
   Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { AnimeData, AnimeDetails } from '../../types';
+import { ChallengeEntry } from './types';
+import { AnimeDetails } from '../../types';
 
 type EditDataModalProps = {
   open?: boolean;
-  malId: string;
-  animeData: AnimeData;
+  challengeData: ChallengeEntry;
   onSave: (updatedData: AnimeDetails) => void;
   onClose: () => void;
 };
@@ -22,30 +22,29 @@ type EditDataModalProps = {
 const EditAnimeModal: React.FC<EditDataModalProps> = ({
   open,
   onClose,
-  malId,
-  animeData,
+  challengeData,
   onSave,
 }) => {
-  const [formData, setFormData] = useState<AnimeDetails>(animeData[malId]);
+  const [formData, setFormData] = useState<AnimeDetails | undefined>(
+    challengeData.animeData
+  );
 
   useEffect(() => {
-    if (open && malId) {
-      setFormData(animeData[malId]);
-    }
-  }, [open]);
+    setFormData(challengeData.animeData);
+  }, [challengeData]);
 
   const handleChange = (name: string, value: string | string[] | number) => {
     const path = name.split('.');
 
     const updatedFormData = {
-      ...formData,
+      ...formData!,
       aired: {
-        ...formData.aired,
+        ...formData!.aired,
         from: {
-          ...formData.aired.from,
+          ...formData!.aired.from,
         },
         to: {
-          ...formData.aired.to,
+          ...formData!.aired.to,
         },
       },
     };
@@ -55,13 +54,13 @@ const EditAnimeModal: React.FC<EditDataModalProps> = ({
         acc[key] = value;
       }
       return acc[key];
-    }, updatedFormData as any);
+    }, updatedFormData as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     setFormData(updatedFormData);
   };
 
   const handleSave = () => {
-    onSave(formData);
+    onSave(formData!);
     onClose();
   };
 

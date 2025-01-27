@@ -37,7 +37,3 @@ export type AnimeDetails = {
   mainCharacters: number;
   supportingCharacters: number;
 };
-
-export type AnimeData = {
-  [malId: string]: AnimeDetails;
-};

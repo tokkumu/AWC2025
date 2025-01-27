@@ -3,11 +3,10 @@ import Header from './Header';
 import Config from './pages/config/Config';
 import Challenges from './pages/challenges/Challenges';
 import { ConfigData } from './pages/config/types';
-import { Typography } from '@mui/material';
 import { ChallengeData } from './pages/challenges/types';
 import { generateChallengeData } from './pages/challenges/data/data';
-import { AnimeData } from './types';
 import Settings from './pages/settings/Settings';
+import Stats from './pages/stats/Stats';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('Config');
@@ -70,15 +69,6 @@ const App: React.FC = () => {
     localStorage.setItem('challengeData', JSON.stringify(challengeData));
   }, [challengeData]);
 
-  const savedAnimeData = localStorage.getItem('animeData');
-  const [animeData, setAnimeData] = useState<AnimeData>(
-    savedAnimeData ? JSON.parse(savedAnimeData) : {}
-  );
-
-  useEffect(() => {
-    localStorage.setItem('animeData', JSON.stringify(animeData));
-  }, [animeData]);
-
   const handlePageClick = (page: string): void => {
     setActiveTab(page);
   };
@@ -94,16 +84,17 @@ const App: React.FC = () => {
           <Challenges
             challengeData={challengeData}
             setChallengeData={setChallengeData}
-            animeData={animeData}
-            setAnimeData={setAnimeData}
             config={configData}
           />
         )}
-        {activeTab === 'Stats' && <Typography>Coming Soon</Typography>}
+        {activeTab === 'Stats' && (
+          <Stats
+            configData={configData}
+            challengeData={challengeData} /**animeData={animeData}*/
+          />
+        )}
         {activeTab === 'Settings' && (
           <Settings
-            animeData={animeData}
-            setAnimeData={setAnimeData}
             challengeData={challengeData}
             setChallengeData={setChallengeData}
             configData={configData}

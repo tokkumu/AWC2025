@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ConfigData } from '../config/types';
-import { AnimeData } from '../../types';
-import { ValidationStatus } from './data/types';
+import { AnimeDetails } from '../../types';
 
 export interface SidebarProps {
   minigames: { [key: string]: boolean };
@@ -15,7 +14,7 @@ export interface ChallengeEntry {
   endDate: string;
   extraInfo: string;
   minigames: string[];
-  validationStatus: ValidationStatus;
+  animeData?: AnimeDetails;
 }
 
 export interface ChallengeData {
@@ -26,15 +25,11 @@ export interface MinigameProps {
   currentMinigame: string;
   challengeData: ChallengeData;
   setChallengeData: Dispatch<SetStateAction<ChallengeData>>;
-  animeData: AnimeData;
-  setAnimeData: Dispatch<SetStateAction<AnimeData>>;
   config: ConfigData;
 }
 
 export interface ChallengesProps {
   challengeData: ChallengeData;
   setChallengeData: Dispatch<SetStateAction<ChallengeData>>;
-  animeData: AnimeData;
-  setAnimeData: Dispatch<SetStateAction<AnimeData>>;
   config: ConfigData;
 }

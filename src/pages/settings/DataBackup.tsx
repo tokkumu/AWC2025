@@ -16,14 +16,9 @@ const DataBackup = (props: SettingsProps) => {
       reader.onload = () => {
         try {
           const importedData = JSON.parse(reader.result as string);
-          if (
-            !importedData.animeData ||
-            !importedData.challengeData ||
-            !importedData.configData
-          ) {
+          if (!importedData.challengeData || !importedData.configData) {
             throw new Error('Invalid data');
           }
-          props.setAnimeData(importedData.animeData);
           props.setChallengeData(importedData.challengeData);
           props.setConfigData(importedData.configData);
         } catch (_err) {
@@ -37,7 +32,6 @@ const DataBackup = (props: SettingsProps) => {
   const handleExport = () => {
     const fileData = JSON.stringify(
       {
-        animeData: props.animeData,
         challengeData: props.challengeData,
         configData: props.configData,
       },

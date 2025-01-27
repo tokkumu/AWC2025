@@ -323,7 +323,6 @@ const Config = ({
               <div className="options-dropdown">
                 <Typography>Select Full Mini-Game Restrictions</Typography>
                 <Select
-                  hiddenLabel
                   name="minigames.whackamoleRestrictions"
                   multiple
                   value={configData.minigames.whackamoleRestrictions}
@@ -416,7 +415,6 @@ const Config = ({
                 </TextField>
 
                 <Select
-                  hiddenLabel
                   name="minigames.whackamole1Restrictions"
                   multiple
                   value={configData.minigames.whackamole1Restrictions}
@@ -462,7 +460,6 @@ const Config = ({
                 </TextField>
 
                 <Select
-                  hiddenLabel
                   name="minigames.whackamole2Restrictions"
                   multiple
                   value={configData.minigames.whackamole2Restrictions}
@@ -508,7 +505,6 @@ const Config = ({
                 </TextField>
 
                 <Select
-                  hiddenLabel
                   name="minigames.whackamole3Restrictions"
                   multiple
                   value={configData.minigames.whackamole3Restrictions}

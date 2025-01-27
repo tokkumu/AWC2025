@@ -1,4 +1,4 @@
-import { AnimeData, AnimeDetails } from '../../types';
+import { AnimeDetails } from '../../types';
 import { ChallengeData, ChallengeEntry } from '../challenges/types';
 import { ConfigData } from '../config/types';
 import get from 'lodash/get';
@@ -12,34 +12,32 @@ import { CHALLENGE_LIST } from '../challenges/data/data';
 import { duckpondText } from './data/duckpond';
 
 export function generateBBCode(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
   const darts = configData.minigames.darts
-    ? generateDarts(animeDetails, challengeDetails, configData)
+    ? generateDarts(challengeDetails, configData)
     : '';
   const bingo = configData.minigames.bingo
-    ? generateBingo(animeDetails, challengeDetails, configData)
+    ? generateBingo(challengeDetails, configData)
     : '';
   const plinko = configData.minigames.plinko
-    ? generatePlinko(animeDetails, challengeDetails, configData)
+    ? generatePlinko(challengeDetails, configData)
     : '';
   const whackamole = configData.minigames.whackamole
-    ? generateWhackamole(animeDetails, challengeDetails, configData)
+    ? generateWhackamole(challengeDetails, configData)
     : '';
   const tarot = configData.minigames.tarot
-    ? generateTarot(animeDetails, challengeDetails, configData)
+    ? generateTarot(challengeDetails, configData)
     : '';
   const duckpond = configData.minigames.duckpond
-    ? generateDuckpond(animeDetails, challengeDetails, configData)
+    ? generateDuckpond(challengeDetails, configData)
     : '';
   const minigamesText = [darts, bingo, plinko, whackamole, tarot, duckpond]
     .filter((m) => !!m)
     .join('\n\n');
 
   const templateData = {
-    animeDetails,
     challengeDetails,
     configData,
     minigamesText,
@@ -98,43 +96,46 @@ function formatDate(date: string) {
   return `${dateMap[month]} ${day}`;
 }
 
-function formatEntry(
-  anime: AnimeDetails,
-  challenge: ChallengeEntry,
-  legend: ConfigData['legend']
-) {
-  return `[*][color=${legendToColor(legend, challenge)}][Started: ${formatDate(challenge.startDate)}] [Finished: ${formatDate(challenge.endDate)}][/color] ${CHALLENGE_LIST[challenge.id].bbCode}\n[url=https://myanimelist.net/anime/${challenge.malId ?? ''}]${anime.title ?? 'ANIME_TITLE'}[/url]${challenge.extraInfo ? `\n[color=#B22222][${challenge.extraInfo}][/color]` : ''}`;
+function formatEntry(params: {
+  anime?: AnimeDetails;
+  challenge: ChallengeEntry;
+  legend: ConfigData['legend'];
+}) {
+  const { anime, challenge, legend } = params;
+  return `[*][color=${legendToColor(legend, challenge)}][Started: ${formatDate(challenge.startDate)}] [Finished: ${formatDate(challenge.endDate)}][/color] ${CHALLENGE_LIST[challenge.id].bbCode}\n[url=https://myanimelist.net/anime/${challenge.malId ?? ''}]${anime?.title ?? 'ANIME_TITLE'}[/url]${challenge.extraInfo ? `\n[color=#B22222][${challenge.extraInfo}][/color]` : ''}`;
 }
 
 function generateDarts(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const entries = Object.values(challengeDetails).filter((entry) =>
+  const challenges = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes('Darts')
   );
 
   return replaceTemplates(dartsText, {
-    darts: entries
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    darts: challenges
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
   });
 }
 
 function generateBingo(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const entries = Object.values(challengeDetails).filter((entry) =>
+  const challenges = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(
       configData.minigames.bingo17 === '17A' ? 'Bingo 17A' : 'Bingo 17B'
     )
   );
-  const entries2 = Object.values(challengeDetails).filter((entry) =>
+  const challenges2 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(
       configData.minigames.bingo21 === '21A' ? 'Bingo 21A' : 'Bingo 21B'
     )
@@ -142,56 +143,74 @@ function generateBingo(
 
   return replaceTemplates(bingoText, {
     bingo17Name: configData.minigames.bingo17,
-    bingo17: entries
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    bingo17: challenges
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
     bingo21Name: configData.minigames.bingo21,
-    bingo21: entries2
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    bingo21: challenges2
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
   });
 }
 
 function generatePlinko(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const entries = Object.values(challengeDetails).filter((entry) =>
+  const challenges = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes('Plinko Tier 1')
   );
-  const entries2 = Object.values(challengeDetails).filter((entry) =>
+  const challenges2 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes('Plinko Tier 2')
   );
-  const entries3 = Object.values(challengeDetails).filter((entry) =>
+  const challenges3 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes('Plinko Tier 3')
   );
 
   return replaceTemplates(plinkoText, {
-    plinko1: entries
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    plinko1: challenges
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
-    plinko2: entries2
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    plinko2: challenges2
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
-    plinko3: entries3
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    plinko3: challenges3
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
   });
 }
 
 function generateWhackamole(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
@@ -203,13 +222,13 @@ function generateWhackamole(
     E: 'QUEST E - Rogue',
   };
 
-  const entries = Object.values(challengeDetails).filter((entry) =>
+  const challenges = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole1}`)
   );
-  const entries2 = Object.values(challengeDetails).filter((entry) =>
+  const challenges2 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole2}`)
   );
-  const entries3 = Object.values(challengeDetails).filter((entry) =>
+  const challenges3 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole3}`)
   );
 
@@ -219,32 +238,43 @@ function generateWhackamole(
     whackamole1Name: names[configData.minigames.whackamole1],
     whackamole1Restrictions:
       configData.minigames.whackamole1Restrictions.join(', '),
-    whackamole1Quests: entries
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    whackamole1Quests: challenges
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
     whackamole2Name: names[configData.minigames.whackamole2],
     whackamole2Restrictions:
       configData.minigames.whackamole2Restrictions.join(', '),
-    whackamole2Quests: entries2
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    whackamole2Quests: challenges2
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
     whackamole3Name: names[configData.minigames.whackamole3],
     whackamole3Restrictions:
       configData.minigames.whackamole3Restrictions.join(', '),
-    whackamole3Quests: entries3
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    whackamole3Quests: challenges3
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
   });
 }
 
 function generateTarot(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
@@ -257,13 +287,13 @@ function generateTarot(
 
   const [routeB] = configData.minigames.tarotEnding.split('.');
 
-  const entries = Object.values(challengeDetails).filter((entry) =>
+  const challenges = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes('Tarot Route 1')
   );
-  const entries2 = Object.values(challengeDetails).filter((entry) =>
+  const challenges2 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(`Tarot Route ${routeB}`)
   );
-  const entries3 = Object.values(challengeDetails).filter((entry) =>
+  const challenges3 = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes(`Tarot Route ${configData.minigames.tarotEnding}`)
   );
 
@@ -278,37 +308,52 @@ function generateTarot(
         '3.2': 'BECOMING SUCCESSFUL',
       }[configData.minigames.tarotEnding]
     }`,
-    tarotRouteA: entries
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    tarotRouteA: challenges
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
-    tarotRouteB: entries2
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    tarotRouteB: challenges2
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
-    tarotRouteC: entries3
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    tarotRouteC: challenges3
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
   });
 }
 
 function generateDuckpond(
-  animeDetails: AnimeData,
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const entries = Object.values(challengeDetails).filter((entry) =>
+  const challenges = Object.values(challengeDetails).filter((entry) =>
     entry.minigames.includes('Duck Pond')
   );
 
   return replaceTemplates(duckpondText, {
-    duckpond: entries
-      .map((entry) =>
-        formatEntry(animeDetails[entry.malId] ?? {}, entry, configData.legend)
+    duckpond: challenges
+      .map((challenge) =>
+        formatEntry({
+          anime: challenge.animeData,
+          challenge,
+          legend: configData.legend,
+        })
       )
       .join('\n\n'),
   });

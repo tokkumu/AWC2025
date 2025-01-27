@@ -1554,11 +1554,6 @@ export function generateChallengeData() {
       endDate: '',
       extraInfo: value.defaultExtraInfo ?? '',
       minigames: value.minigames,
-      validationStatus: {
-        valid: false,
-        success: [],
-        error: [],
-      },
     };
   }
   return data;
@@ -1600,4 +1595,23 @@ export function getEnabledMinigames(minigames: ConfigData['minigames']) {
     'Tarot Route 3.2': minigames.tarot && minigames.tarotEnding === '3.2',
     'Duck Pond': minigames.duckpond,
   };
+}
+
+export function getEnabledChallenges(
+  minigames: ConfigData['minigames'],
+  challengeData: ChallengeData
+) {
+  const enabledMinigames = getEnabledMinigames(minigames);
+  const enabledChallenges: ChallengeData = {};
+  for (const [id, value] of Object.entries(challengeData)) {
+    if (
+      value.minigames.some(
+        (minigame) =>
+          enabledMinigames[minigame as keyof typeof enabledMinigames]
+      )
+    ) {
+      enabledChallenges[id] = value;
+    }
+  }
+  return enabledChallenges;
 }

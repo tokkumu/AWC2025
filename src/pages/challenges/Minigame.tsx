@@ -17,6 +17,7 @@ import './Minigame.css';
 import { AnimeDetails } from '../../types';
 import { Settings } from '@mui/icons-material';
 import EditAnimeModal from './EditAnimeModal';
+import { loadAnime } from '../../utils';
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -29,6 +30,10 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 const Minigame = (props: MinigameProps) => {
+  const [openModals, setOpenModals] = useState<{
+    [challengeId: string]: boolean;
+  }>({});
+
   if (!props.currentMinigame) {
     return (
       <div className="main-content">
@@ -37,65 +42,31 @@ const Minigame = (props: MinigameProps) => {
     );
   }
 
-  const [openModals, setOpenModals] = useState<{
-    [challengeId: string]: boolean;
-  }>({});
-
   const handleChange = (challengeId: string, key: string, value: string) => {
-    const animeId = key === 'malId' ? value : getChallenge(challengeId).malId;
-
-    const newChallengeData = {
-      ...props.challengeData[challengeId],
-      [key]: value,
-    };
-
-    const validationStatus = props.animeData[animeId]
-      ? validateAnime(
-          props.animeData[animeId],
-          props.config,
-          newChallengeData,
-          props.currentMinigame,
-          CHALLENGE_LIST[challengeId].validators ?? []
-        )
-      : { valid: false, success: [], error: ['Anime not found'] };
-
     props.setChallengeData((challengeData) => ({
       ...challengeData,
       [challengeId]: {
         ...challengeData[challengeId],
         [key]: value,
-        validationStatus,
+        animeData:
+          key === 'malId' ? undefined : challengeData[challengeId].animeData,
       },
     }));
   };
 
   const modalOnSave = (challengeId: string, animeDetails: AnimeDetails) => {
-    props.setAnimeData((animeData) => ({
-      ...animeData,
-      [animeDetails.malId]: animeDetails,
-    }));
-
-    const validationStatus = validateAnime(
-      animeDetails,
-      props.config,
-      getChallenge(challengeId),
-      props.currentMinigame,
-      CHALLENGE_LIST[challengeId].validators ?? []
-    );
-
     props.setChallengeData((challengeData) => ({
       ...challengeData,
       [challengeId]: {
         ...challengeData[challengeId],
-        validationStatus,
+        animeData: animeDetails,
       },
     }));
   };
 
   const getChallenge = (challengeId: string) =>
     props.challengeData[challengeId];
-  const getAnime = (challengeId: string) =>
-    props.animeData[getChallenge(challengeId).malId];
+  const getAnime = (challengeId: string) => getChallenge(challengeId).animeData;
 
   const getCurrentMinigame = () => {
     return Object.entries(CHALLENGE_LIST).filter(([_id, c]) =>
@@ -103,76 +74,14 @@ const Minigame = (props: MinigameProps) => {
     );
   };
 
-  const loadAnime = async (malId: string, challengeId: string) => {
-    if (!malId || isNaN(+malId)) {
-      return;
-    }
+  const onLoad = async (malId: string, challengeId: string) => {
+    const updatedEntry = await loadAnime(malId);
 
-    const { data } = await (
-      await fetch(`https://api.jikan.moe/v4/anime/${malId}/full`)
-    ).json();
-
-    const charactersData = await (
-      await fetch(`https://api.jikan.moe/v4/anime/${malId}/characters`)
-    ).json();
-
-    if (!data) {
-      return;
-    }
-
-    const updatedEntry: AnimeDetails = {
-      timestamp: Date.now(),
-      malId: data.mal_id,
-      title: data.title,
-      type: data.type,
-      source: data.source,
-      episodes: data.episodes,
-      status: data.status,
-      aired: {
-        day: data.broadcast.day ?? data.broadcast.string,
-        time: data.broadcast.time,
-        from: data.aired.prop.from,
-        to: data.aired.prop.to,
-      },
-      duration: data.duration,
-      rating: data.rating,
-      score: data.score,
-      rank: data.rank,
-      popularity: data.popularity,
-      members: data.members,
-      favorites: data.favorites,
-      season: data.season,
-      year: data.season_year,
-      genres: data.genres.map((g: { name: string }) => g.name),
-      themes: data.themes.map((t: { name: string }) => t.name),
-      demographics: data.demographics.map((d: { name: string }) => d.name),
-      openingCount: data.theme.openings.length,
-      endingCount: data.theme.endings.length,
-      mainCharacters: charactersData.data.filter(
-        (c: { role: string }) => c.role === 'Main'
-      ).length,
-      supportingCharacters: charactersData.data.filter(
-        (c: { role: string }) => c.role === 'Supporting'
-      ).length,
-    };
-
-    props.setAnimeData((animeData) => ({
-      ...animeData,
-      [malId]: updatedEntry,
-    }));
-
-    const validationStatus = validateAnime(
-      updatedEntry,
-      props.config,
-      getChallenge(challengeId),
-      props.currentMinigame,
-      CHALLENGE_LIST[challengeId].validators ?? []
-    );
     props.setChallengeData((challengeData) => ({
       ...challengeData,
       [challengeId]: {
         ...challengeData[challengeId],
-        validationStatus,
+        animeData: updatedEntry,
       },
     }));
   };
@@ -187,7 +96,7 @@ const Minigame = (props: MinigameProps) => {
       </Typography>
       {getCurrentMinigame().map(([challengeId, c]) => (
         <Box
-          key={c.description}
+          key={challengeId}
           sx={{
             border: '1px solid #ddd',
             padding: '16px',
@@ -197,6 +106,7 @@ const Minigame = (props: MinigameProps) => {
           }}
         >
           <Typography
+            key={`${challengeId}-description`}
             variant="h6"
             color="common.white"
             dangerouslySetInnerHTML={{ __html: c.description }}
@@ -204,24 +114,35 @@ const Minigame = (props: MinigameProps) => {
 
           {c.addlInfo.map((info, index) => (
             <Typography
-              key={index}
+              key={`${challengeId}-addlInfo-${index}`}
               sx={{ marginLeft: '16px', color: '#DDD' }}
               dangerouslySetInnerHTML={{ __html: info }}
             />
           ))}
 
           <Typography
+            key={`${challengeId}-anime-title`}
             variant="h6"
             color="common.white"
             sx={{ marginTop: '16px' }}
           >
-            {getAnime(challengeId)?.title}
+            <a
+              href={`https://myanimelist.net/anime/${getAnime(challengeId)?.malId}`}
+            >
+              {getAnime(challengeId)?.title}
+            </a>
           </Typography>
 
-          <Grid container spacing={2} sx={{ marginTop: '16px' }}>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Typography>MAL Id</Typography>
+          <Grid
+            container
+            key={`${challengeId}-grid`}
+            spacing={2}
+            sx={{ marginTop: '16px' }}
+          >
+            <Grid key={`${challengeId}-malId`} size={{ xs: 12, sm: 4 }}>
+              <Typography key={`${challengeId}-malId-label`}>MAL Id</Typography>
               <TextField
+                key={`${challengeId}-malId-input`}
                 hiddenLabel
                 fullWidth
                 variant="outlined"
@@ -233,9 +154,12 @@ const Minigame = (props: MinigameProps) => {
                 }
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Typography>Start Date</Typography>
+            <Grid key={`${challengeId}-startDate`} size={{ xs: 12, sm: 4 }}>
+              <Typography key={`${challengeId}-startDate-label`}>
+                Start Date
+              </Typography>
               <TextField
+                key={`${challengeId}-startDate-input`}
                 hiddenLabel
                 type="date"
                 fullWidth
@@ -248,9 +172,12 @@ const Minigame = (props: MinigameProps) => {
                 }
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Typography>End Date</Typography>
+            <Grid key={`${challengeId}-endDate`} size={{ xs: 12, sm: 4 }}>
+              <Typography key={`${challengeId}-endDate-label`}>
+                End Date
+              </Typography>
               <TextField
+                key={`${challengeId}-endDate-input`}
                 hiddenLabel
                 type="date"
                 fullWidth
@@ -263,9 +190,12 @@ const Minigame = (props: MinigameProps) => {
                 }
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 12 }}>
-              <Typography>Extra Info</Typography>
+            <Grid key={`${challengeId}-extraInfo`} size={{ xs: 12, sm: 12 }}>
+              <Typography key={`${challengeId}-extraInfo-label`}>
+                Extra Info
+              </Typography>
               <TextField
+                key={`${challengeId}-extraInfo-input`}
                 hiddenLabel
                 fullWidth
                 variant="outlined"
@@ -277,30 +207,50 @@ const Minigame = (props: MinigameProps) => {
                 }
               />
             </Grid>
-            <Grid size={{ xs: 11, sm: 11 }}>
+            <Grid key={`${challengeId}-status`} size={{ xs: 11, sm: 11 }}>
               <HtmlTooltip
+                key={`${challengeId}-status-tooltip`}
                 title={
-                  <Fragment>
-                    {getChallenge(challengeId).validationStatus.success.map(
-                      (s) => (
-                        <Typography display="block">✓ {s}</Typography>
-                      )
-                    )}
-                    {getChallenge(challengeId).validationStatus.error.map(
-                      (e) => (
-                        <Typography display="block">✗ {e}</Typography>
-                      )
-                    )}
+                  <Fragment key={`${challengeId}-status-tooltip-fragment`}>
+                    {validateAnime(
+                      props.config,
+                      getChallenge(challengeId),
+                      props.currentMinigame
+                    ).success.map((s, idx) => (
+                      <Typography
+                        key={`${challengeId}-status-tooltip-fragment-success-${idx}`}
+                        display="block"
+                      >
+                        ✓ {s}
+                      </Typography>
+                    ))}
+                    {validateAnime(
+                      props.config,
+                      getChallenge(challengeId),
+                      props.currentMinigame
+                    ).error.map((e, idx) => (
+                      <Typography
+                        key={`${challengeId}-status-tooltip-fragment-error-${idx}`}
+                        display="block"
+                      >
+                        ✗ {e}
+                      </Typography>
+                    ))}
                   </Fragment>
                 }
                 placement="top"
                 arrow
               >
                 <Button
+                  key={`${challengeId}-status-button`}
                   variant="contained"
                   color={
                     getAnime(challengeId)
-                      ? getChallenge(challengeId).validationStatus.valid
+                      ? validateAnime(
+                          props.config,
+                          getChallenge(challengeId),
+                          props.currentMinigame
+                        ).valid
                         ? 'success'
                         : 'error'
                       : 'warning'
@@ -308,13 +258,17 @@ const Minigame = (props: MinigameProps) => {
                   fullWidth
                   disableTouchRipple
                   onClick={() =>
-                    loadAnime(getChallenge(challengeId).malId, challengeId)
+                    onLoad(getChallenge(challengeId).malId, challengeId)
                   }
                 >
-                  <Typography>
+                  <Typography key={`${challengeId}-status-button-text`}>
                     Status:{' '}
                     {getAnime(challengeId)
-                      ? getChallenge(challengeId).validationStatus.valid
+                      ? validateAnime(
+                          props.config,
+                          getChallenge(challengeId),
+                          props.currentMinigame
+                        ).valid
                         ? 'Valid'
                         : 'Invalid'
                       : 'Click To Load Anime'}
@@ -322,8 +276,9 @@ const Minigame = (props: MinigameProps) => {
                 </Button>
               </HtmlTooltip>
             </Grid>
-            <Grid size={{ xs: 1, sm: 1 }}>
+            <Grid key={`${challengeId}-settings`} size={{ xs: 1, sm: 1 }}>
               <Button
+                key={`${challengeId}-settings-button`}
                 variant="contained"
                 color="primary"
                 disabled={!getAnime(challengeId)}
@@ -342,8 +297,7 @@ const Minigame = (props: MinigameProps) => {
                 onSave={(animeDetails) =>
                   modalOnSave(challengeId, animeDetails)
                 }
-                animeData={props.animeData}
-                malId={getChallenge(challengeId).malId}
+                challengeData={getChallenge(challengeId)}
               />
             </Grid>
           </Grid>
