@@ -88,10 +88,7 @@ const App: React.FC = () => {
           />
         )}
         {activeTab === 'Stats' && (
-          <Stats
-            configData={configData}
-            challengeData={challengeData} /**animeData={animeData}*/
-          />
+          <Stats configData={configData} challengeData={challengeData} />
         )}
         {activeTab === 'Settings' && (
           <Settings

@@ -1,10 +1,10 @@
-import './ProgressBar.css';
+import './ConfigProgressBar.css';
 
-type ProgressBarProps = {
+type ConfigProgressBarProps = {
   progress: number;
 };
 
-const ProgressBar = ({ progress }: ProgressBarProps) => {
+const ConfigProgressBar = ({ progress }: ConfigProgressBarProps) => {
   const levels = [
     { value: 25, label: 'Level 1', color: '#9ED450' },
     { value: 45, label: 'Level 2', color: '#FFB400' },
@@ -14,8 +14,8 @@ const ProgressBar = ({ progress }: ProgressBarProps) => {
   ];
 
   return (
-    <div className="progress-bar-container">
-      <div className="progress-bar-background">
+    <div className="config-progress-bar-container">
+      <div className="config-progress-bar-background">
         {levels.map((level, index) => {
           const previousValue = index === 0 ? 0 : levels[index - 1].value;
           let width = 0;
@@ -30,7 +30,7 @@ const ProgressBar = ({ progress }: ProgressBarProps) => {
           return (
             <div
               key={level.value}
-              className="progress-bar-section"
+              className="config-progress-bar-section"
               style={{
                 left: `${previousValue}%`,
                 width: `${width}%`,
@@ -41,11 +41,11 @@ const ProgressBar = ({ progress }: ProgressBarProps) => {
         })}
       </div>
 
-      <div className="progress-labels">
+      <div className="config-progress-labels">
         {levels.map((level) => (
           <div
             key={level.value}
-            className={`level-label ${progress >= level.value ? 'active' : ''}`}
+            className={`config-level-label ${progress >= level.value ? 'active' : ''}`}
             style={{
               left: `calc(${level.value}% - 30px)`,
               color: level.color,
@@ -57,11 +57,11 @@ const ProgressBar = ({ progress }: ProgressBarProps) => {
         ))}
       </div>
 
-      <div className="progress-lines">
+      <div className="config-progress-lines">
         {levels.map((level) => (
           <div
             key={level.value}
-            className="progress-line"
+            className="config-progress-line"
             style={{ left: `${level.value}%` }}
           />
         ))}
@@ -70,4 +70,4 @@ const ProgressBar = ({ progress }: ProgressBarProps) => {
   );
 };
 
-export default ProgressBar;
+export default ConfigProgressBar;

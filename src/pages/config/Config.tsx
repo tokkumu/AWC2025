@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import { ConfigData } from './types';
-import ProgressBar from './ProgressBar';
+import ConfigProgressBar from './ConfigProgressBar';
 import {
   Checkbox,
   FormControlLabel,
@@ -226,7 +226,7 @@ const Config = ({
             Mini-Games - {calculateProgress(configData)} Total Tickets Selected
           </h2>
 
-          <ProgressBar progress={calculateProgress(configData)} />
+          <ConfigProgressBar progress={calculateProgress(configData)} />
 
           <div className="minigame-box">
             <FormControlLabel

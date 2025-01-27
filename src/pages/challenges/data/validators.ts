@@ -281,7 +281,7 @@ export function validateFinishedAiring(): Validator {
     const airEndDate = `${params.anime.aired.to.year}-${params.anime.aired.to.month}-${params.anime.aired.to.day}`;
     return {
       criterion: 'Anime must have finished airing before you started it',
-      valid: airEndDate <= params.entry.startDate,
+      valid: !params.entry.startDate || airEndDate <= params.entry.startDate,
     };
   };
 }

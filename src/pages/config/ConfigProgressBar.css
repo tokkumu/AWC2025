@@ -1,4 +1,4 @@
-.progress-bar-container {
+.config-progress-bar-container {
   position: relative;
   height: 20px;
   width: 90%;
@@ -6,25 +6,25 @@
   padding-bottom: 75px;
 }
 
-.progress-bar-background {
+.config-progress-bar-background {
   width: 100%;
   height: 20px;
   background-color: #e0e0e0;
   position: relative;
 }
 
-.progress-bar-fill {
+.config-progress-bar-fill {
   height: 100%;
 }
 
-.progress-bar-section {
+.config-progress-bar-section {
   position: absolute;
   top: 0;
   bottom: 0;
   height: 100%;
 }
 
-.progress-line {
+.config-progress-line {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -32,7 +32,7 @@
   opacity: 0.7;
 }
 
-.progress-labels {
+.config-progress-labels {
   position: absolute;
   top: 25px;
   width: 100%;
@@ -40,7 +40,7 @@
   justify-content: space-between;
 }
 
-.level-label {
+.config-level-label {
   position: absolute;
   top: 5px;
   font-size: 0.9em;
@@ -48,23 +48,23 @@
   opacity: 0.5;
 }
 
-.level-label.active {
+.config-level-label.active {
   opacity: 1;
   font-weight: bold;
 }
 
-.level-label span {
+.config-level-label span {
   display: block;
   text-align: center;
 }
 
-.progress-lines {
+.config-progress-lines {
   position: absolute;
   top: 0;
   width: 100%;
 }
 
-.progress-line {
+.config-progress-line {
   position: absolute;
   top: 0;
   bottom: 0;
