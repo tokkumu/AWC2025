@@ -39,26 +39,20 @@ export function validateAnime(
     return { valid: false, success: [], error: ['Anime not found'] };
   }
 
-  for (const challenge of Object.values(challengeData)) {
-    if (challengeId === challenge.id) {
-      continue;
-    }
-    if (
-      challenge.animeData?.malId === challengeData[challengeId].animeData.malId
-    ) {
-      return {
-        valid: false,
-        success: [],
-        error: [`Anime already used in challenge ${challenge.id}`],
-      };
-    }
-  }
-
   const params: ValidatorParams = {
     anime: challengeData[challengeId].animeData,
     config,
     entry: challengeData[challengeId],
   };
+
+  const formValidators = buildResponse([
+    validateUniqueAnime(challengeData),
+    validateStartEndDates(),
+  ].map((validator) => validator(params)));
+
+  if (!formValidators.valid) {
+    return formValidators;
+  }
 
   const allValidators = [...CHALLENGE_LIST[challengeId].validators];
 
@@ -123,6 +117,43 @@ function arrayToList(arr: string[]): string {
 
 function numberToMonth(num: number): string {
   return new Date(0, num - 1).toLocaleString('en', { month: 'long' });
+}
+
+export function validateUniqueAnime(challengeData: ChallengeData): Validator {
+  return ({ anime, entry }: ValidatorParams) => {
+    for (const challenge of Object.values(challengeData)) {
+      if (entry.id === challenge.id) {
+        continue;
+      }
+      if (
+        challenge.animeData?.malId === anime.malId
+      ) {
+        return {
+          criterion: 'Anime already used in challenge ' + challenge.id,
+          valid: false,
+        };
+      }
+    }
+    return { criterion: 'Anime must be unique', valid: true };
+  };
+}
+
+export function validateStartEndDates(): Validator {
+  return ({ entry }: ValidatorParams) => {
+    if(entry.startDate && !entry.startDate.startsWith('2025') && entry.id !== '89') {
+      return { criterion: 'Anime must be started in 2025', valid: false };
+    }
+
+    if(entry.endDate && !entry.endDate.startsWith('2025')) {
+      return { criterion: 'Anime must be finished in 2025', valid: false };
+    }
+
+    if(entry.startDate && entry.endDate && entry.startDate > entry.endDate) {
+      return { criterion: 'Anime must be started before it is finished', valid: false };
+    }
+
+    return { criterion: 'Anime start and end date must be valid', valid: true };
+  };
 }
 
 export function validateType(allowedTypes: string[]): Validator {
