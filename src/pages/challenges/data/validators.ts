@@ -1,5 +1,5 @@
 import { ConfigData } from '../../config/types';
-import { ChallengeEntry } from '../types';
+import { ChallengeData } from '../types';
 import { CHALLENGE_LIST } from './data';
 import {
   ValidationStatus,
@@ -31,20 +31,36 @@ const restrictionMap: Record<string, Validator> = {
 
 export function validateAnime(
   config: ConfigData,
-  challengeEntry: ChallengeEntry,
+  challengeData: ChallengeData,
+  challengeId: string,
   minigame: string
 ): ValidationStatus {
-  if (!challengeEntry.animeData) {
+  if (!challengeData[challengeId].animeData) {
     return { valid: false, success: [], error: ['Anime not found'] };
   }
 
+  for (const challenge of Object.values(challengeData)) {
+    if (challengeId === challenge.id) {
+      continue;
+    }
+    if (
+      challenge.animeData?.malId === challengeData[challengeId].animeData.malId
+    ) {
+      return {
+        valid: false,
+        success: [],
+        error: [`Anime already used in challenge ${challenge.id}`],
+      };
+    }
+  }
+
   const params: ValidatorParams = {
-    anime: challengeEntry.animeData,
+    anime: challengeData[challengeId].animeData,
     config,
-    entry: challengeEntry,
+    entry: challengeData[challengeId],
   };
 
-  const allValidators = [...CHALLENGE_LIST[challengeEntry.id].validators];
+  const allValidators = [...CHALLENGE_LIST[challengeId].validators];
 
   if (minigame.startsWith('Whack-a-Mole')) {
     if (`Whack-a-Mole ${config.minigames.whackamole1}` === minigame) {

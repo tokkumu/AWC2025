@@ -214,7 +214,8 @@ const Minigame = (props: MinigameProps) => {
                   <Fragment key={`${challengeId}-status-tooltip-fragment`}>
                     {validateAnime(
                       props.config,
-                      getChallenge(challengeId),
+                      props.challengeData,
+                      challengeId,
                       props.currentMinigame
                     ).success.map((s, idx) => (
                       <Typography
@@ -226,7 +227,8 @@ const Minigame = (props: MinigameProps) => {
                     ))}
                     {validateAnime(
                       props.config,
-                      getChallenge(challengeId),
+                      props.challengeData,
+                      challengeId,
                       props.currentMinigame
                     ).error.map((e, idx) => (
                       <Typography
@@ -248,7 +250,8 @@ const Minigame = (props: MinigameProps) => {
                     getAnime(challengeId)
                       ? validateAnime(
                           props.config,
-                          getChallenge(challengeId),
+                          props.challengeData,
+                          challengeId,
                           props.currentMinigame
                         ).valid
                         ? 'success'
@@ -266,7 +269,8 @@ const Minigame = (props: MinigameProps) => {
                     {getAnime(challengeId)
                       ? validateAnime(
                           props.config,
-                          getChallenge(challengeId),
+                          props.challengeData,
+                          challengeId,
                           props.currentMinigame
                         ).valid
                         ? 'Valid'
