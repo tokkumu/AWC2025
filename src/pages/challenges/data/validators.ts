@@ -1,5 +1,5 @@
 import { ConfigData } from '../../config/types';
-import { ChallengeData } from '../types';
+import { ChallengeData, ChallengeEntry } from '../types';
 import { CHALLENGE_LIST } from './data';
 import {
   ValidationStatus,
@@ -45,10 +45,14 @@ export function validateAnime(
     entry: challengeData[challengeId],
   };
 
-  const formValidators = buildResponse([
-    validateUniqueAnime(challengeData),
-    validateStartEndDates(),
-  ].map((validator) => validator(params)));
+  const formValidators = buildResponse(
+    [
+      validateUniqueAnime(challengeData),
+      validateStartYear(),
+      validateEndYear(),
+      validateStartEndDates(),
+    ].map((validator) => validator(params))
+  );
 
   if (!formValidators.valid) {
     return formValidators;
@@ -94,6 +98,67 @@ export function validateAnime(
     }
   }
 
+  if (minigame.startsWith('Tarot') || minigame.startsWith('Plinko')) {
+    switch (minigame) {
+      case 'Tarot Route 2':
+        allValidators.push(
+          validatePreviousTierCompleted(
+            Object.values(challengeData).filter((entry) =>
+              entry.minigames.includes('Tarot Route 1')
+            )
+          )
+        );
+        break;
+      case 'Tarot Route 3':
+        allValidators.push(
+          validatePreviousTierCompleted(
+            Object.values(challengeData).filter((entry) =>
+              entry.minigames.includes('Tarot Route 1')
+            )
+          )
+        );
+        break;
+      case 'Tarot Route 2.1':
+      case 'Tarot Route 2.2':
+        allValidators.push(
+          validatePreviousTierCompleted(
+            Object.values(challengeData).filter((entry) =>
+              entry.minigames.includes('Tarot Route 2')
+            )
+          )
+        );
+        break;
+      case 'Tarot Route 3.1':
+      case 'Tarot Route 3.2':
+        allValidators.push(
+          validatePreviousTierCompleted(
+            Object.values(challengeData).filter((entry) =>
+              entry.minigames.includes('Tarot Route 3')
+            )
+          )
+        );
+        break;
+      case 'Plinko Tier 2':
+        allValidators.push(
+          validatePreviousTierCompleted(
+            Object.values(challengeData).filter((entry) =>
+              entry.minigames.includes('Plinko Tier 1')
+            )
+          )
+        );
+        break;
+      case 'Plinko Tier 3':
+        allValidators.push(
+          validatePreviousTierCompleted(
+            Object.values(challengeData).filter((entry) =>
+              entry.minigames.includes('Plinko Tier 2')
+            )
+          )
+        );
+        break;
+    }
+  }
+
   return buildResponse(allValidators.map((validator) => validator(params)));
 }
 
@@ -125,9 +190,7 @@ export function validateUniqueAnime(challengeData: ChallengeData): Validator {
       if (entry.id === challenge.id) {
         continue;
       }
-      if (
-        challenge.animeData?.malId === anime.malId
-      ) {
+      if (challenge.animeData?.malId === anime.malId) {
         return {
           criterion: 'Anime already used in challenge ' + challenge.id,
           valid: false,
@@ -138,21 +201,52 @@ export function validateUniqueAnime(challengeData: ChallengeData): Validator {
   };
 }
 
+export function validateStartYear(): Validator {
+  return ({ entry }: ValidatorParams) => {
+    return {
+      criterion: 'Anime must be started in 2025',
+      valid: !entry.startDate || entry.startDate.startsWith('2025'),
+    };
+  };
+}
+
+export function validateEndYear(): Validator {
+  return ({ entry }: ValidatorParams) => {
+    return {
+      criterion: 'Anime must be finished in 2025',
+      valid: !entry.endDate || entry.endDate.startsWith('2025'),
+    };
+  };
+}
+
 export function validateStartEndDates(): Validator {
   return ({ entry }: ValidatorParams) => {
-    if(entry.startDate && !entry.startDate.startsWith('2025') && entry.id !== '89') {
-      return { criterion: 'Anime must be started in 2025', valid: false };
-    }
+    return {
+      criterion: 'Anime must be started before it is finished',
+      valid:
+        !entry.startDate || !entry.endDate || entry.startDate <= entry.endDate,
+    };
+  };
+}
 
-    if(entry.endDate && !entry.endDate.startsWith('2025')) {
-      return { criterion: 'Anime must be finished in 2025', valid: false };
-    }
+export function validatePreviousTierCompleted(previous: ChallengeEntry[]) {
+  previous = previous.filter(
+    (entry) =>
+      entry.animeData &&
+      !(
+        entry.animeData?.episodes >= 45 &&
+        entry.animeData?.episodeDurationMinutes >= 20
+      )
+  );
 
-    if(entry.startDate && entry.endDate && entry.startDate > entry.endDate) {
-      return { criterion: 'Anime must be started before it is finished', valid: false };
-    }
-
-    return { criterion: 'Anime start and end date must be valid', valid: true };
+  return ({ entry }: ValidatorParams) => {
+    const invalid = previous.filter(
+      (prev) => !prev.endDate || prev.endDate > entry.startDate
+    );
+    return {
+      criterion: 'Previous tier must be completed before starting',
+      valid: !entry.startDate || invalid.length === 0,
+    };
   };
 }
 
@@ -185,21 +279,11 @@ export function validateRuntime(
   exp: 'gte' | 'lte'
 ): Validator {
   return (params: ValidatorParams) => {
-    const durationParser =
-      /(?:(?<hour>\d+) hr)?\s*(?:(?<min>\d+) min)?\s*(?:per ep)?/i;
-    const parsedDuration = durationParser.exec(params.anime.duration);
-    if (!parsedDuration) {
-      return { criterion: 'Anime runtime is invalid', valid: false };
-    } else {
-      const runtime =
-        (parseInt(parsedDuration.groups?.hour ?? '0') * 60 +
-          parseInt(parsedDuration.groups?.min ?? '0')) *
-        params.anime.episodes;
-      return {
-        criterion: `Anime must have ${exp === 'gte' ? 'at least' : 'at most'} ${duration} minutes of runtime`,
-        valid: exp === 'gte' ? runtime >= duration : runtime <= duration,
-      };
-    }
+    const runtime = params.anime.episodeDurationMinutes * params.anime.episodes;
+    return {
+      criterion: `Anime must have ${exp === 'gte' ? 'at least' : 'at most'} ${duration} minutes of runtime`,
+      valid: exp === 'gte' ? runtime >= duration : runtime <= duration,
+    };
   };
 }
 
@@ -208,23 +292,13 @@ export function validateEpisodeDuration(
   exp: 'gte' | 'lte'
 ): Validator {
   return (params: ValidatorParams) => {
-    const durationParser =
-      /(?:(?<hour>\d+) hr)?\s*(?:(?<min>\d+) min)?\s*(?:per ep)?/i;
-    const parsedDuration = durationParser.exec(params.anime.duration);
-    if (!parsedDuration) {
-      return { criterion: 'Anime episode duration is invalid', valid: false };
-    } else {
-      const episodeDuration =
-        parseInt(parsedDuration.groups?.hour ?? '0') * 60 +
-        parseInt(parsedDuration.groups?.min ?? '0');
-      return {
-        criterion: `Anime must have ${exp === 'gte' ? 'at least' : 'at most'} ${duration} minutes per episode`,
-        valid:
-          exp === 'gte'
-            ? episodeDuration >= duration
-            : episodeDuration <= duration,
-      };
-    }
+    return {
+      criterion: `Anime must have ${exp === 'gte' ? 'at least' : 'at most'} ${duration} minutes per episode`,
+      valid:
+        exp === 'gte'
+          ? params.anime.episodeDurationMinutes >= duration
+          : params.anime.episodeDurationMinutes <= duration,
+    };
   };
 }
 

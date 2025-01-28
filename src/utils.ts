@@ -1,5 +1,17 @@
 import { AnimeDetails } from './types';
 
+function durationToMinutes(duration: string) {
+  if (duration === 'Unknown') return 0;
+  const { hr, min, sec } = duration.match(
+    /^(?:(?<hr>\d+) hr)? *(?:(?<min>\d+) min)? *(?:(?<sec>\d+) sec)?.*$/
+  )!.groups!;
+  return +(
+    (parseInt(hr) || 0) * 60 +
+    (parseInt(min) || 0) +
+    (parseInt(sec) || 0) / 60
+  ).toFixed(2);
+}
+
 export async function loadAnime(
   malId: string
 ): Promise<AnimeDetails | undefined> {
@@ -34,6 +46,7 @@ export async function loadAnime(
       to: data.aired.prop.to,
     },
     duration: data.duration,
+    episodeDurationMinutes: durationToMinutes(data.duration),
     rating: data.rating,
     score: data.score,
     rank: data.rank,

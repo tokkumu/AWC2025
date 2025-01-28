@@ -21,6 +21,7 @@ export type AnimeDetails = {
     };
   };
   duration: string;
+  episodeDurationMinutes: number;
   rating: string;
   score: number;
   rank: number;
