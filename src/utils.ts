@@ -1,6 +1,6 @@
 import { AnimeDetails } from './types';
 
-function durationToMinutes(duration: string) {
+export function durationToMinutes(duration: string) {
   if (duration === 'Unknown') return 0;
   const { hr, min, sec } = duration.match(
     /^(?:(?<hr>\d+) hr)? *(?:(?<min>\d+) min)? *(?:(?<sec>\d+) sec)?.*$/

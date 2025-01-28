@@ -14,11 +14,12 @@ const Stats = (props: StatsProps) => {
     ).filter((c) => c.malId);
 
   const getAnimeListForMinigame = (minigame: string) =>
-    Object.values(getAnimeList()).filter((c) => c.minigames.includes(minigame));
+    getAnimeList().filter((c) => c.minigames.includes(minigame));
+
   return (
     <div className="stats">
       <Typography variant="h4">Stats - Work In Progress</Typography>
-      <Typography variant="h6">Summary</Typography>
+      <Typography variant="h5">Summary</Typography>
       <Typography variant="body1">
         Total Episodes:{' '}
         {getAnimeList().reduce(
@@ -37,7 +38,34 @@ const Stats = (props: StatsProps) => {
       </Typography>
       <Typography variant="body1">Average Duration:</Typography>
       <Typography variant="body1">Average Remaining Duration:</Typography>
-      <Typography variant="h6">Progress</Typography>
+      <br />
+      <Typography variant="h5">Progress</Typography>
+      <Typography variant="h6">
+        Overall - Required Challenges:{' '}
+        {Object.entries(getEnabledMinigames(props.configData.minigames)).reduce(
+          (acc, [minigame, enabled]) =>
+            acc + (enabled ? MINIGAME_DATA[minigame].required : 0),
+          0
+        )}
+      </Typography>
+      <StatsProgressBar
+        ptw={getAnimeList().reduce((acc, challenge) => {
+          return acc + (!challenge.startDate ? 1 : 0);
+        }, 0)}
+        watching={getAnimeList().reduce((acc, challenge) => {
+          return acc + (challenge.startDate && !challenge.endDate ? 1 : 0);
+        }, 0)}
+        complete={getAnimeList().reduce((acc, challenge) => {
+          return acc + (challenge.endDate ? 1 : 0);
+        }, 0)}
+        required={Object.entries(
+          getEnabledMinigames(props.configData.minigames)
+        ).reduce(
+          (acc, [minigame, enabled]) =>
+            acc + (enabled ? MINIGAME_DATA[minigame].required : 0),
+          0
+        )}
+      />
       {Object.entries(getEnabledMinigames(props.configData.minigames)).map(
         ([minigame, enabled]) => {
           return (

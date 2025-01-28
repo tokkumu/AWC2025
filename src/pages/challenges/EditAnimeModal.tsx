@@ -11,6 +11,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import { ChallengeEntry } from './types';
 import { AnimeDetails } from '../../types';
+import { durationToMinutes } from '../../utils';
 
 type EditDataModalProps = {
   open?: boolean;
@@ -55,6 +56,11 @@ const EditAnimeModal: React.FC<EditDataModalProps> = ({
       }
       return acc[key];
     }, updatedFormData as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    if (name === 'duration')
+      updatedFormData.episodeDurationMinutes = durationToMinutes(
+        value as string
+      );
 
     setFormData(updatedFormData);
   };
