@@ -24,7 +24,7 @@ const Sidebar = (props: SidebarProps) => {
         {Object.keys(minigames).map((page) => (
           <li
             key={page}
-            className="page"
+            className="sidebar-page"
             hidden={!minigames[page]}
             onClick={() => setCurrentMinigame(page)}
           >
