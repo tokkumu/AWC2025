@@ -245,7 +245,12 @@ export function validatePreviousTierCompleted(previous: ChallengeEntry[]) {
     );
     return {
       criterion: 'Previous tier must be completed before starting',
-      valid: !entry.startDate || invalid.length === 0,
+      valid:
+        (entry.animeData &&
+          entry.animeData?.episodes >= 45 &&
+          entry.animeData?.episodeDurationMinutes >= 20) ||
+        !entry.startDate ||
+        invalid.length === 0,
     };
   };
 }
