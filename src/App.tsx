@@ -7,9 +7,16 @@ import { ChallengeData } from './pages/challenges/types';
 import { generateChallengeData } from './pages/challenges/data/data';
 import Settings from './pages/settings/Settings';
 import Stats from './pages/stats/Stats';
+import ReactGA from 'react-ga4';
+
+ReactGA.initialize('G-6VF54F2BBW')
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('Config');
+
+  useEffect(() => {
+    ReactGA.send({ hitType: 'pageview', page: '/awc2025' });
+  }, []);
 
   const pages = {
     Config: 'Config',
