@@ -3,17 +3,17 @@ export const plinkoText = `[color=#9068D4][size=140][b]MINI-GAME #3: PLINKO[/b][
 [size=90]✧ [color=#4BB1DF][b]Tiers must be completed in order (Exception: Anime with 45+ eps, 20+ min ep duration[/b][/color]) ✧[/size]
 [spoiler="Mini-Game #3"]
 [color=#9068D4][size=110][b]TIER #1[/b][/size][/color]
-[color=#9068D4][b]Finish Date: [/b][/color]
+[color=#9068D4][b]Finish Date: {{plinko1FinishDate}}[/b][/color]
 
 {{plinko1}}
 
 [color=#9068D4][size=110][b]TIER #2[/b][/size][/color]
-[color=#9068D4][b]Finish Date: [/b][/color]
+[color=#9068D4][b]Finish Date: {{plinko2FinishDate}}[/b][/color]
 
 {{plinko2}}
 
 [color=#9068D4][size=110][b]TIER #3[/b][/size][/color]
-[color=#9068D4][b]Finish Date: [/b][/color]
+[color=#9068D4][b]Finish Date: {{plinko3FinishDate}}[/b][/color]
 
 {{plinko3}}
 [/spoiler]`;

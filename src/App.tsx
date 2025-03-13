@@ -9,7 +9,7 @@ import Settings from './pages/settings/Settings';
 import Stats from './pages/stats/Stats';
 import ReactGA from 'react-ga4';
 
-ReactGA.initialize('G-6VF54F2BBW')
+ReactGA.initialize('G-B46HP6N1HN');
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('Config');

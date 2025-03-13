@@ -8,7 +8,7 @@ import { bingoText } from './data/bingo';
 import { plinkoText } from './data/plinko';
 import { whackamoleText } from './data/whackamole';
 import { tarotText } from './data/tarot';
-import { CHALLENGE_LIST } from '../challenges/data/data';
+import { CHALLENGE_LIST, getEnabledChallenges } from '../challenges/data/data';
 import { duckpondText } from './data/duckpond';
 
 export function generateBBCode(
@@ -41,9 +41,11 @@ export function generateBBCode(
     challengeDetails,
     configData,
     minigamesText,
-    startDate: '',
-    finishDate: '',
-    challengeList: '',
+    ...calculateStartEndDates(
+      Object.values(
+        getEnabledChallenges(configData.minigames, challengeDetails)
+      )
+    ),
   };
 
   return replaceTemplates(signupText, templateData);
@@ -96,6 +98,24 @@ function formatDate(date: string) {
   return `${dateMap[month]} ${day}`;
 }
 
+function calculateStartEndDates(challenges: ChallengeEntry[]) {
+  const startDates = challenges
+    .map((c) => c.malId && c.startDate)
+    .filter((c) => !!c);
+  const endDates = challenges
+    .map((c) => c.malId && c.endDate)
+    .filter((c) => !!c);
+
+  return {
+    startDate: startDates.length
+      ? startDates.reduce((min, date) => (date < min ? date : min))
+      : '',
+    finishDate: endDates.length
+      ? endDates.reduce((max, date) => (date > max ? date : max))
+      : '',
+  };
+}
+
 function formatEntry(params: {
   anime?: AnimeDetails;
   challenge: ChallengeEntry;
@@ -109,8 +129,8 @@ function generateDarts(
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const challenges = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes('Darts')
+  const challenges = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes('Darts') && entry.malId
   );
 
   return replaceTemplates(dartsText, {
@@ -130,15 +150,17 @@ function generateBingo(
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const challenges = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(
-      configData.minigames.bingo17 === '17A' ? 'Bingo 17A' : 'Bingo 17B'
-    )
+  const challenges = Object.values(challengeDetails).filter(
+    (entry) =>
+      entry.minigames.includes(
+        configData.minigames.bingo17 === '17A' ? 'Bingo 17A' : 'Bingo 17B'
+      ) && entry.malId
   );
-  const challenges2 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(
-      configData.minigames.bingo21 === '21A' ? 'Bingo 21A' : 'Bingo 21B'
-    )
+  const challenges2 = Object.values(challengeDetails).filter(
+    (entry) =>
+      entry.minigames.includes(
+        configData.minigames.bingo21 === '21A' ? 'Bingo 21A' : 'Bingo 21B'
+      ) && entry.malId
   );
 
   return replaceTemplates(bingoText, {
@@ -169,17 +191,20 @@ function generatePlinko(
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const challenges = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes('Plinko Tier 1')
+  const challenges = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes('Plinko Tier 1') && entry.malId
   );
-  const challenges2 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes('Plinko Tier 2')
+  const challenges2 = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes('Plinko Tier 2') && entry.malId
   );
-  const challenges3 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes('Plinko Tier 3')
+  const challenges3 = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes('Plinko Tier 3') && entry.malId
   );
 
   return replaceTemplates(plinkoText, {
+    plinko1FinishDate: calculateStartEndDates(challenges).finishDate,
+    plinko2FinishDate: calculateStartEndDates(challenges2).finishDate,
+    plinko3FinishDate: calculateStartEndDates(challenges3).finishDate,
     plinko1: challenges
       .map((challenge) =>
         formatEntry({
@@ -222,14 +247,23 @@ function generateWhackamole(
     E: 'QUEST E - Rogue',
   };
 
-  const challenges = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole1}`)
+  const challenges = Object.values(challengeDetails).filter(
+    (entry) =>
+      entry.minigames.includes(
+        `Whack-a-Mole ${configData.minigames.whackamole1}`
+      ) && entry.malId
   );
-  const challenges2 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole2}`)
+  const challenges2 = Object.values(challengeDetails).filter(
+    (entry) =>
+      entry.minigames.includes(
+        `Whack-a-Mole ${configData.minigames.whackamole2}`
+      ) && entry.malId
   );
-  const challenges3 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(`Whack-a-Mole ${configData.minigames.whackamole3}`)
+  const challenges3 = Object.values(challengeDetails).filter(
+    (entry) =>
+      entry.minigames.includes(
+        `Whack-a-Mole ${configData.minigames.whackamole3}`
+      ) && entry.malId
   );
 
   return replaceTemplates(whackamoleText, {
@@ -287,14 +321,17 @@ function generateTarot(
 
   const [routeB] = configData.minigames.tarotEnding.split('.');
 
-  const challenges = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes('Tarot Route 1')
+  const challenges = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes('Tarot Route 1') && entry.malId
   );
-  const challenges2 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(`Tarot Route ${routeB}`)
+  const challenges2 = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes(`Tarot Route ${routeB}`) && entry.malId
   );
-  const challenges3 = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes(`Tarot Route ${configData.minigames.tarotEnding}`)
+  const challenges3 = Object.values(challengeDetails).filter(
+    (entry) =>
+      entry.minigames.includes(
+        `Tarot Route ${configData.minigames.tarotEnding}`
+      ) && entry.malId
   );
 
   return replaceTemplates(tarotText, {
@@ -342,8 +379,8 @@ function generateDuckpond(
   challengeDetails: ChallengeData,
   configData: ConfigData
 ) {
-  const challenges = Object.values(challengeDetails).filter((entry) =>
-    entry.minigames.includes('Duck Pond')
+  const challenges = Object.values(challengeDetails).filter(
+    (entry) => entry.minigames.includes('Duck Pond') && entry.malId
   );
 
   return replaceTemplates(duckpondText, {
