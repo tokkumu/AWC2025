@@ -14,10 +14,6 @@ ReactGA.initialize('GT-KDTSJ7PP');
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('Config');
 
-  useEffect(() => {
-    ReactGA.send({ hitType: 'pageview', page: '/awc2025' });
-  }, []);
-
   const pages = {
     Config: 'Config',
     Challenges: 'Challenges',
