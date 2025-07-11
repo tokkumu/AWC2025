@@ -8,6 +8,7 @@ import { generateChallengeData } from './pages/challenges/data/data';
 import Settings from './pages/settings/Settings';
 import Stats from './pages/stats/Stats';
 import ReactGA from 'react-ga4';
+import Import from './pages/import/Import';
 
 ReactGA.initialize('GT-KDTSJ7PP');
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
     Config: 'Config',
     Challenges: 'Challenges',
     Stats: 'Stats',
+    Import: 'Import',
     Settings: 'Settings',
   };
 
@@ -92,6 +94,12 @@ const App: React.FC = () => {
         )}
         {activeTab === 'Stats' && (
           <Stats configData={configData} challengeData={challengeData} />
+        )}
+        {activeTab === 'Import' && (
+          <Import
+            challengeData={challengeData}
+            setChallengeData={setChallengeData}
+          />
         )}
         {activeTab === 'Settings' && (
           <Settings

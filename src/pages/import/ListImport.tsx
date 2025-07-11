@@ -1,17 +1,26 @@
 import { Button, Input, Typography } from '@mui/material';
-import { SettingsProps } from './types';
+import { AnimeExport, AnimeExportRawData, ListImportProps } from './types';
 import { ChangeEvent, useRef } from 'react';
 import pako from 'pako';
 import * as xml2js from 'xml2js';
 
-const ListImport = (props: SettingsProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateList = (list: any) => {
-    const {
-      myanimelist: { anime: animeList },
-    } = list;
+const ListImport = (props: ListImportProps) => {
+  const convertRawExport = (
+    rawList: AnimeExportRawData['myanimelist']['anime']
+  ): AnimeExport[] =>
+    rawList.map((rawAnime) => {
+      const newAnime: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
+      for (const key in rawAnime) {
+        newAnime[key as keyof AnimeExport] =
+          rawAnime[key as keyof typeof rawAnime]?.[0] ?? '';
+      }
+      return newAnime;
+    });
+
+  const updateList = (list: AnimeExportRawData) => {
+    const animeList = convertRawExport(list.myanimelist.anime);
     for (const anime of animeList) {
-      const animeId = anime.series_animedb_id[0];
+      const animeId = anime.series_animedb_id;
 
       const challenge = Object.values(props.challengeData).find(
         (challenge) => challenge.malId === animeId
@@ -22,9 +31,9 @@ const ListImport = (props: SettingsProps) => {
       }
 
       const startDate =
-        anime.my_start_date[0] === '0000-00-00' ? '' : anime.my_start_date[0];
+        anime.my_start_date === '0000-00-00' ? '' : anime.my_start_date;
       const endDate =
-        anime.my_finish_date[0] === '0000-00-00' ? '' : anime.my_finish_date[0];
+        anime.my_finish_date === '0000-00-00' ? '' : anime.my_finish_date;
 
       props.setChallengeData((challengeData) => ({
         ...challengeData,
@@ -35,6 +44,7 @@ const ListImport = (props: SettingsProps) => {
         },
       }));
     }
+    props.setData(animeList);
   };
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);

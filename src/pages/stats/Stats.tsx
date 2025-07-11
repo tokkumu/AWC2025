@@ -18,7 +18,7 @@ const Stats = (props: StatsProps) => {
 
   return (
     <div className="stats">
-      <Typography variant="h4">Stats - Work In Progress</Typography>
+      <Typography variant="h4">Stats</Typography>
       <Typography variant="h5">Summary</Typography>
       <Typography variant="body1">
         Total Episodes:{' '}
@@ -36,8 +36,6 @@ const Stats = (props: StatsProps) => {
           0
         )}
       </Typography>
-      <Typography variant="body1">Average Duration:</Typography>
-      <Typography variant="body1">Average Remaining Duration:</Typography>
       <br />
       <Typography variant="h5">Progress</Typography>
       <Typography variant="h6">

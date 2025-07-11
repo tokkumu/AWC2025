@@ -2,7 +2,6 @@ import { Button, Typography } from '@mui/material';
 import { SettingsProps } from './types';
 import { generateBBCode } from './utils';
 import DataBackup from './DataBackup';
-import ListImport from './ListImport';
 import { loadAnime } from '../../utils';
 import { useState } from 'react';
 
@@ -30,8 +29,6 @@ const Settings = (props: SettingsProps) => {
 
   return (
     <div>
-      <ListImport {...props} />
-
       <DataBackup {...props} />
 
       <Typography variant="h5" marginLeft="1%" marginTop="10px">

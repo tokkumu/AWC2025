@@ -9,7 +9,6 @@ export type Challenge = {
   defaultExtraInfo?: string;
   minigames: string[];
   validators: Validator[];
-  manualValidators?: Validator[];
 };
 export type ChallengeList = { [challengeId: string]: Challenge };
 

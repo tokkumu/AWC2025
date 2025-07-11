@@ -259,9 +259,8 @@ const Config = ({
             {configData.minigames.bingo && (
               <div className="options-dropdown">
                 <Typography>Select 17 Bingo Card</Typography>
-                <TextField
+                <Select
                   hiddenLabel
-                  select
                   name="minigames.bingo17"
                   value={configData.minigames.bingo17}
                   onChange={(e) =>
@@ -271,12 +270,11 @@ const Config = ({
                 >
                   <MenuItem value="17A">17A</MenuItem>
                   <MenuItem value="17B">17B</MenuItem>
-                </TextField>
+                </Select>
 
                 <Typography>Select 21 Bingo Card</Typography>
-                <TextField
+                <Select
                   hiddenLabel
-                  select
                   name="minigames.bingo21"
                   value={configData.minigames.bingo21}
                   onChange={(e) =>
@@ -286,7 +284,7 @@ const Config = ({
                 >
                   <MenuItem value="21A">21A</MenuItem>
                   <MenuItem value="21B">21B</MenuItem>
-                </TextField>
+                </Select>
               </div>
             )}
           </div>
@@ -326,6 +324,7 @@ const Config = ({
                   name="minigames.whackamoleRestrictions"
                   multiple
                   value={configData.minigames.whackamoleRestrictions}
+                  renderValue={(selected) => selected.join(', ')}
                   onChange={(e) =>
                     handleMinigameChange(
                       e.target.name,
@@ -339,6 +338,11 @@ const Config = ({
                 >
                   {CHALLENGE_RESTRICTIONS.map((restriction) => (
                     <MenuItem key={restriction} value={restriction}>
+                      <Checkbox
+                        checked={configData.minigames.whackamoleRestrictions.includes(
+                          restriction
+                        )}
+                      />
                       {restriction}
                     </MenuItem>
                   ))}
@@ -348,9 +352,8 @@ const Config = ({
                 ) ? (
                   <div>
                     <Typography>Exalted Tag-Based Restriction</Typography>
-                    <TextField
+                    <Select
                       hiddenLabel
-                      select
                       name="minigames.exaltedRestriction"
                       value={configData.minigames.exaltedRestriction}
                       onChange={(e) =>
@@ -364,7 +367,7 @@ const Config = ({
                           {restriction}
                         </MenuItem>
                       ))}
-                    </TextField>
+                    </Select>
                   </div>
                 ) : null}
                 {configData.minigames.whackamoleRestrictions.includes(
@@ -372,9 +375,8 @@ const Config = ({
                 ) ? (
                   <div>
                     <Typography>Supreme Rating-Based Restriction</Typography>
-                    <TextField
+                    <Select
                       hiddenLabel
-                      select
                       name="minigames.supremeRestriction"
                       value={configData.minigames.supremeRestriction}
                       onChange={(e) =>
@@ -388,23 +390,19 @@ const Config = ({
                           {restriction}
                         </MenuItem>
                       ))}
-                    </TextField>
+                    </Select>
                   </div>
                 ) : null}
                 <Typography>
                   Select Whack-A-Mole Quest #1 And Restrictions
                 </Typography>
-                <TextField
+                <Select
                   hiddenLabel
-                  select
                   name="minigames.whackamole1"
                   value={configData.minigames.whackamole1}
                   onChange={(e) =>
                     handleMinigameChange(e.target.name, e.target.value)
                   }
-                  slotProps={{
-                    htmlInput: { style: { backgroundColor: 'white' } },
-                  }}
                   sx={{ width: '5%', backgroundColor: 'white' }}
                 >
                   <MenuItem value="A">A</MenuItem>
@@ -412,12 +410,13 @@ const Config = ({
                   <MenuItem value="C">C</MenuItem>
                   <MenuItem value="D">D</MenuItem>
                   <MenuItem value="E">E</MenuItem>
-                </TextField>
+                </Select>
 
                 <Select
                   name="minigames.whackamole1Restrictions"
                   multiple
                   value={configData.minigames.whackamole1Restrictions}
+                  renderValue={(selected) => selected.join(', ')}
                   onChange={(e) =>
                     handleMinigameChange(
                       e.target.name,
@@ -434,6 +433,11 @@ const Config = ({
                 >
                   {QUEST_RESTRICTIONS.map((restriction) => (
                     <MenuItem key={restriction} value={restriction}>
+                      <Checkbox
+                        checked={configData.minigames.whackamole1Restrictions.includes(
+                          restriction
+                        )}
+                      />
                       {restriction}
                     </MenuItem>
                   ))}
@@ -442,9 +446,8 @@ const Config = ({
                 <Typography>
                   Select Whack-A-Mole Quest #2 And Restrictions
                 </Typography>
-                <TextField
+                <Select
                   hiddenLabel
-                  select
                   name="minigames.whackamole2"
                   value={configData.minigames.whackamole2}
                   onChange={(e) =>
@@ -457,12 +460,13 @@ const Config = ({
                   <MenuItem value="C">C</MenuItem>
                   <MenuItem value="D">D</MenuItem>
                   <MenuItem value="E">E</MenuItem>
-                </TextField>
+                </Select>
 
                 <Select
                   name="minigames.whackamole2Restrictions"
                   multiple
                   value={configData.minigames.whackamole2Restrictions}
+                  renderValue={(selected) => selected.join(', ')}
                   onChange={(e) =>
                     handleMinigameChange(
                       e.target.name,
@@ -479,6 +483,11 @@ const Config = ({
                 >
                   {QUEST_RESTRICTIONS.map((restriction) => (
                     <MenuItem key={restriction} value={restriction}>
+                      <Checkbox
+                        checked={configData.minigames.whackamole2Restrictions.includes(
+                          restriction
+                        )}
+                      />
                       {restriction}
                     </MenuItem>
                   ))}
@@ -487,9 +496,8 @@ const Config = ({
                 <Typography>
                   Select Whack-A-Mole Quest #3 And Restrictions
                 </Typography>
-                <TextField
+                <Select
                   hiddenLabel
-                  select
                   name="minigames.whackamole3"
                   value={configData.minigames.whackamole3}
                   onChange={(e) =>
@@ -502,12 +510,13 @@ const Config = ({
                   <MenuItem value="C">C</MenuItem>
                   <MenuItem value="D">D</MenuItem>
                   <MenuItem value="E">E</MenuItem>
-                </TextField>
+                </Select>
 
                 <Select
                   name="minigames.whackamole3Restrictions"
                   multiple
                   value={configData.minigames.whackamole3Restrictions}
+                  renderValue={(selected) => selected.join(', ')}
                   onChange={(e) =>
                     handleMinigameChange(
                       e.target.name,
@@ -524,6 +533,11 @@ const Config = ({
                 >
                   {QUEST_RESTRICTIONS.map((restriction) => (
                     <MenuItem key={restriction} value={restriction}>
+                      <Checkbox
+                        checked={configData.minigames.whackamole3Restrictions.includes(
+                          restriction
+                        )}
+                      />
                       {restriction}
                     </MenuItem>
                   ))}
@@ -548,9 +562,8 @@ const Config = ({
             {configData.minigames.tarot && (
               <div className="options-dropdown">
                 <Typography>Select Tarot Ending</Typography>
-                <TextField
+                <Select
                   hiddenLabel
-                  select
                   name="minigames.tarotEnding"
                   value={configData.minigames.tarotEnding}
                   onChange={(e) =>
@@ -563,7 +576,7 @@ const Config = ({
                   <MenuItem value="2.2">Ending #2 (2.2)</MenuItem>
                   <MenuItem value="3.1">Ending #3 (3.1)</MenuItem>
                   <MenuItem value="3.2">Ending #4 (3.2)</MenuItem>
-                </TextField>
+                </Select>
               </div>
             )}
           </div>
