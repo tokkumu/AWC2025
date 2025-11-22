@@ -164,7 +164,7 @@ export const CHALLENGE_LIST: ChallengeList = {
     description:
       '(7) Watch an anime that a 2025 AWC participant has completed for the 2025 challenge (participant must have completed anime before item is started)',
     addlInfo: [],
-    defaultExtraInfo: 'AWC ParticipantL | Item Used For: | Post Link: ',
+    defaultExtraInfo: 'AWC Participant: | Item Used For: | Post Link: ',
     minigames: ['Duck Pond'],
     validators: [],
   },

@@ -92,7 +92,8 @@ const Minigame = (props: MinigameProps) => {
         {props.currentMinigame}
       </Typography>
       <Typography variant="h6" color="common.white">
-        Required Challenges: {MINIGAME_DATA[props.currentMinigame].required}
+        Complete {MINIGAME_DATA[props.currentMinigame].required}/
+        {getCurrentMinigame().length} challenges
       </Typography>
       {getCurrentMinigame().map(([challengeId, c]) => (
         <Box

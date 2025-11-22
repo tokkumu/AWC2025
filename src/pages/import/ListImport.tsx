@@ -19,6 +19,17 @@ const ListImport = (props: ListImportProps) => {
 
   const updateList = (list: AnimeExportRawData) => {
     const animeList = convertRawExport(list.myanimelist.anime);
+
+    // Reset start/end dates to clear any incorrect values
+    props.setChallengeData((challengeData) => {
+      const newData = { ...challengeData };
+      for (const challenge in challengeData) {
+        newData[challenge].startDate = '';
+        newData[challenge].endDate = '';
+      }
+      return newData;
+    });
+
     for (const anime of animeList) {
       const animeId = anime.series_animedb_id;
 

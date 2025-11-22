@@ -1,9 +1,18 @@
-import { Button, Typography } from '@mui/material';
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 import { SettingsProps } from './types';
 import { generateBBCode } from './utils';
 import DataBackup from './DataBackup';
 import { loadAnime } from '../../utils';
 import { useState } from 'react';
+import { getEnabledMinigames } from '../challenges/data/data';
+import { ChallengeEntry } from '../challenges/types';
+import { ConfigData } from '../config/types';
 
 const Settings = (props: SettingsProps) => {
   const [loading, setLoading] = useState(false);
@@ -25,6 +34,22 @@ const Settings = (props: SettingsProps) => {
       await new Promise((resolve) => setTimeout(resolve, 2400));
     }
     setLoading(false);
+  };
+
+  const isChallengeInEnabledMinigame = (
+    challenge: ChallengeEntry,
+    minigames: ConfigData['minigames']
+  ) => {
+    const enabledMinigames = getEnabledMinigames(minigames);
+    for (const minigame of challenge.minigames) {
+      if (
+        enabledMinigames[
+          minigame as keyof ReturnType<typeof getEnabledMinigames>
+        ]
+      )
+        return true;
+    }
+    return false;
   };
 
   return (
@@ -60,6 +85,50 @@ const Settings = (props: SettingsProps) => {
         }}
         value={generateBBCode(props.challengeData, props.configData)}
       />
+
+      <Typography variant="h5" marginLeft="1%" marginTop="10px">
+        Orphaned Anime
+      </Typography>
+      <Typography variant="body1" marginLeft="1%">
+        Anime whose minigames have been disabled but are still set.
+      </Typography>
+      <List
+        sx={{
+          width: '98%',
+          marginLeft: '1%',
+          marginBottom: '20px',
+          bgcolor: '#333',
+        }}
+      >
+        {Object.values(props.challengeData)
+          .filter(
+            (challenge) =>
+              challenge.malId &&
+              !isChallengeInEnabledMinigame(
+                challenge,
+                props.configData.minigames
+              )
+          )
+          .map((c) => (
+            <ListItem key={c.id}>
+              <ListItemText
+                primary={
+                  <div>
+                    Anime:{' '}
+                    <a href={`https://myanimelist.net/anime/${c.malId}`}>
+                      {c.animeData?.title ?? 'Unknown Title'}
+                    </a>
+                  </div>
+                }
+                secondary={
+                  <div>
+                    Challenge: {c.id} - Minigames: {c.minigames.join(', ')}
+                  </div>
+                }
+              />
+            </ListItem>
+          ))}
+      </List>
     </div>
   );
 };
